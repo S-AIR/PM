@@ -1,0 +1,1850 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZC103PM0001F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZC103PM0001F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZC103PM0001F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZC103PM0001F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_button_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; ES_COL_ID</font>
+<font color ="#0000FF">*&      --&gt; ES_ROW_NO</font>
+<font color ="#0000FF">*&      --&gt; sender</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_button_click  USING    ps_col_id TYPE lvc_s_col
+                                   ps_row_no TYPE lvc_s_roid
+                                   po_sender TYPE REF TO cl_gui_alv_grid.
+
+  CASE po_sender.
+    WHEN go_disp_sch_alv.
+
+      DATA lv_scheduleid TYPE  zc103e_sd_scheduleid.
+
+      lv_scheduleid = gt_disp_sch[ ps_row_no-row_id ]-scheduleid.
+
+      PERFORM  salv_display USING lv_scheduleid.
+  ENDCASE.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_double_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; E_ROW</font>
+<font color ="#0000FF">*&      --&gt; E_COLUMN</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_double_click  USING    pv_row
+                                   pv_column
+                                   po_sender TYPE REF TO cl_gui_alv_grid.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; E_ROW_ID</font>
+<font color ="#0000FF">*&      --&gt; E_COLUMN_ID</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_hotspot_click  USING    pv_row_id
+                                    pv_column_id
+                                   po_sender TYPE REF TO cl_gui_alv_grid.
+
+<font color ="#0000FF">*  CASE po_sender.</font>
+<font color ="#0000FF">*  ENDCASE.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_edit_toolbar</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; E_OBJECT</font>
+<font color ="#0000FF">*&      --&gt; E_INTERACTIVE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_edit_toolbar USING po_object TYPE
+                                         REF TO cl_alv_event_toolbar_set
+                               pv_interactive
+                               po_sender TYPE REF TO cl_gui_alv_grid.
+
+  CASE po_sender.
+    WHEN go_disp_sch_alv.
+
+      PERFORM make_divide_line USING po_object.
+
+      IF gv_make_status = 'E'.
+
+        PERFORM make_btn USING 'MAKE' icon_okay ' Make Order'
+                               ' 오더생성'  po_object.
+
+        PERFORM make_divide_line USING po_object.
+
+      ENDIF.
+
+      IF gv_green_status = 'E'.
+
+        PERFORM make_btn USING 'GREE' icon_led_green ' 정비 오더가 생성된 스케줄만 조회합니다.'
+                               ' 정비대상'  po_object.
+
+        PERFORM make_divide_line USING po_object.
+
+      ENDIF.
+
+      IF gv_yellow_status = 'E'.
+
+        PERFORM make_btn USING 'YELL' icon_led_yellow' 정비 오더를 생성해야 하는 스케줄만 조회합니다.'
+                               ' 정비예정'  po_object.
+
+        PERFORM make_divide_line USING po_object.
+
+      ENDIF.
+
+  ENDCASE.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_divide_line</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; PO_OBJCET</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_divide_line USING po_object TYPE
+                                      REF TO cl_alv_event_toolbar_set.
+
+  po_object-&gt;mt_toolbar = VALUE #( BASE po_object-&gt;mt_toolbar ( butn_type = '3' ) ).
+
+ENDFORM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_btn</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; P_</font>
+<font color ="#0000FF">*&      --&gt; ICON_TOGGLE_DISPLAY_CHANGE</font>
+<font color ="#0000FF">*&      --&gt; P_</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_btn USING pv_function pv_icon pv_quick po_text
+                    po_object TYPE REF TO cl_alv_event_toolbar_set.
+
+  po_object-&gt;mt_toolbar = VALUE #( BASE po_object-&gt;mt_toolbar ( text = po_text
+                                                                function  = pv_function
+                                                                icon      = pv_icon
+                                                                quickinfo = pv_quick ) ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_modify_value</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; E_MODIFIED</font>
+<font color ="#0000FF">*&      --&gt; ET_GOOD_CELLS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_modify_value USING pv_modified
+                               pt_good_cells TYPE lvc_t_modi
+                               po_sender TYPE REF TO cl_gui_alv_grid.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handle_user_command</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; E_UCOMM</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handle_user_command USING pv_ucomm
+                               po_sender TYPE REF TO cl_gui_alv_grid.
+
+  CASE pv_ucomm.
+    WHEN 'MAKE'.
+      PERFORM make_oder.
+    WHEN 'GREE'.
+      PERFORM set_data_green.
+    WHEN 'YELL'.
+      PERFORM set_data_yellow.
+  ENDCASE.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form expand_no_children</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; NODE_KEY</font>
+<font color ="#0000FF">*&      --&gt; ITEM_NAME</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM expand_no_children  USING    p_node_key  TYPE tv_nodekey .
+
+  DATA : node_table TYPE treev_ntab,
+         node       TYPE treev_node,
+         item_table TYPE STANDARD TABLE OF mtreeitm,
+         item       TYPE mtreeitm.
+
+  IF p_node_key = 'Child1'.
+
+    CLEAR node.
+    node-node_key = 'P01'.
+    node-relatkey = p_node_key.
+    node-n_image = '@7T@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P01'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P01'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P01'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P01 조회'.
+    APPEND item TO item_table.
+
+    CLEAR node.
+    node-node_key = 'P02'.
+    node-relatkey = p_node_key.
+    node-n_image = '@7T@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P02'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P02'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P02'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P02 조회'.
+    APPEND item TO item_table.
+
+    CALL METHOD go_list_tree-&gt;add_nodes_and_items
+      EXPORTING
+        node_table                = node_table
+        item_table                = item_table
+        item_table_structure_name = 'MTREEITM'.
+
+  ELSEIF p_node_key = 'Child2'.
+
+    CLEAR node.
+    node-node_key = 'P03'.
+    node-relatkey = p_node_key.
+    node-n_image = '@AV@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P03'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P03'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P03'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P03 조회'.
+    APPEND item TO item_table.
+
+    CLEAR node.
+    node-node_key = 'P04'.
+    node-relatkey = p_node_key.
+    node-n_image = '@AV@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P04'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P04'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P04'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P04 조회'.
+    APPEND item TO item_table.
+
+    CLEAR node.
+    node-node_key = 'P05'.
+    node-relatkey = p_node_key.
+    node-n_image = '@AV@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P05'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P05'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P05'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P05 조회'.
+    APPEND item TO item_table.
+
+    CLEAR node.
+    node-node_key = 'P06'.
+    node-relatkey = p_node_key.
+    node-n_image = '@AV@'.
+    node-last_hitem = '1'.
+    node-relatship = cl_gui_list_tree=&gt;relat_last_child.
+    APPEND node TO node_table.
+
+    CLEAR item.
+    item-node_key = 'P06'.
+    item-item_name = '1'.
+    item-class = cl_gui_column_tree=&gt;item_class_text.
+    item-length = 5.
+    item-text = 'P06'.
+    APPEND item TO item_table.
+
+    CLEAR item.
+    item-node_key = 'P06'.
+    item-item_name = '2'.
+    item-class = cl_gui_column_tree=&gt;item_class_button.
+    item-alignment = cl_gui_list_tree=&gt;align_center.
+    item-length = 10.
+    item-text = 'P06 조회'.
+    APPEND item TO item_table.
+
+    CALL METHOD go_list_tree-&gt;add_nodes_and_items
+      EXPORTING
+        node_table                = node_table
+        item_table                = item_table
+        item_table_structure_name = 'MTREEITM'.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form chart_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; POINT</font>
+<font color ="#0000FF">*&      --&gt; SERIES</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM chart_click  USING    pv_series TYPE i
+                           pv_point  TYPE i.
+
+  DATA : lv_name   TYPE string,
+         lv_value  TYPE i,
+         lv_point  TYPE n LENGTH 2,
+         lv_flight TYPE string.
+
+  lv_point = pv_point.
+
+  IF pv_point EQ 0.
+
+    SKIP.
+
+  ELSE.
+    CASE pv_point.
+      WHEN 1.
+        lv_flight = 'P01'.
+      WHEN 2.
+        lv_flight = 'P02'.
+      WHEN 3.
+        lv_flight = 'P03'.
+      WHEN 4.
+        lv_flight = 'P04'.
+      WHEN 5.
+        lv_flight = 'P05'.
+      WHEN 6.
+        lv_flight = 'P06'.
+    ENDCASE.
+    CASE pv_series.
+      WHEN 1.
+        lv_name = |gv_gp{ lv_point }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+        lv_value = &lt;fs_name&gt;.
+        MESSAGE i000 WITH |{ lv_flight } 항공기의 정비 오더가 생성 완료된 노선은 { lv_value }건입니다|.
+      WHEN 2.
+        lv_name = |gv_yp{ lv_point }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+        lv_value = &lt;fs_name&gt;.
+        MESSAGE i000 WITH |{ lv_flight } 항공기의 정비 오더가 생성 가능한 노선은 { lv_value }건입니다|.
+      WHEN 3.
+        lv_name = |gv_rp{ lv_point }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+        lv_value = &lt;fs_name&gt;.
+        MESSAGE i000 WITH |{ lv_flight } 항공기의 정비 오더 대상이 아닌 노선은 { lv_value }건입니다|.
+    ENDCASE.
+
+    UNASSIGN &lt;fs_name&gt;.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form refresh_table</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_table USING po_object
+                   TYPE REF TO cl_gui_alv_grid.
+
+  DATA : ls_stable TYPE lvc_s_stbl.
+
+  ls_stable = VALUE #(
+                        row = abap_true
+                        col = abap_true
+                     ).
+  po_object-&gt;refresh_table_display(
+    EXPORTING
+      is_stable = ls_stable ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_oder</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_oder .
+
+<font color ="#0000FF">*-- 변수 초기화</font>
+  CLEAR : gs_check, gs_ooh.
+
+<font color ="#0000FF">*-- 항공기 누적 비행시간 조회</font>
+  SELECT SINGLE
+    FROM zc103pmt0015
+    FIELDS fh_since_last_a, fh_since_last_c, fh_since_last_d
+    WHERE aircraft_id = @gv_id
+    INTO CORRESPONDING FIELDS OF @gs_check.
+
+<font color ="#0000FF">*-- 변수 선언</font>
+  DATA : lv_order(6) TYPE n,
+         lv_as(6)    TYPE n,
+         lv_count    TYPE i,
+         lv_type,
+         ls_amount   TYPE i,
+         lv_hindex   TYPE i,
+         lv_iindex   TYPE i.
+
+<font color ="#0000FF">*-- Function Module 호출</font>
+  call function <a href ="zc103pmfg0001/zc103pmfg0001.html">'ZC103PMFG0001'</a>
+    IMPORTING
+      empno   = gv_empno
+      empname = gv_empname.
+
+  IF gv_empno IS NOT INITIAL.
+
+<font color ="#0000FF">*-- 누적 비행 시간을 통한 정비 오더 계산</font>
+    LOOP AT gt_time ASSIGNING FIELD-SYMBOL(&lt;fs&gt;).
+
+      CLEAR : gs_ooh, gs_ooi, lv_count.
+
+      IF ( gs_check-fh_since_last_d + &lt;fs&gt;-flighttime ) &gt; 24000.
+
+        lv_count = 5.
+        lv_type = 'O'.
+        gs_ooi-description    = 'D-Check Overhaul'.
+        gs_ooi-duration       = 1200.
+
+        gs_check-fh_since_last_d = 0.
+
+      ELSEIF ( gs_check-fh_since_last_c + &lt;fs&gt;-flighttime ) &gt; 6000.
+
+        lv_count = 4.
+        lv_type = 'R'.
+        gs_ooi-description    = 'C-Check Maintenance'.
+        gs_ooi-duration       = 120.
+
+        gs_check-fh_since_last_c = 0.
+
+      ELSEIF ( gs_check-fh_since_last_a + &lt;fs&gt;-flighttime ) &gt; 600.
+
+        lv_count = 3.
+        lv_type = 'M'.
+        gs_ooi-description    = 'A-Check Maintenance'.
+        gs_ooi-duration       = 5.
+
+        gs_check-fh_since_last_a = 0.
+
+      ELSE.
+
+        lv_count = 2.
+        lv_type = 'D'.
+        gs_ooi-description    = 'Daily Inspection'.
+        gs_ooi-duration       = 1.
+
+      ENDIF.
+
+<font color ="#0000FF">*-- Number Range Object 호출</font>
+      CALL FUNCTION 'NUMBER_GET_NEXT'
+        EXPORTING
+          nr_range_nr = '01'
+          object      = 'ZC103PM01'
+        IMPORTING
+          number      = lv_order.
+
+<font color ="#0000FF">*-- 정비 오더 헤더 생성</font>
+      gs_ooh-order_id     = |PM{ lv_order }|.
+      gs_ooh-aircraft_id  = gv_id.
+      gs_ooh-scheduleid   = &lt;fs&gt;-scheduleid.
+      gs_ooh-maint_type   = lv_type.
+      gs_ooh-plan_date    = &lt;fs&gt;-departdate.
+      gs_ooh-release_date = gv_today.
+      gs_ooh-remarks      = |승인자 : { gv_empname }|.
+      gs_ooh-erdat        = sy-datum.
+      gs_ooh-erzet        = sy-uzeit.
+      gs_ooh-ernam        = sy-uname.
+      gs_ooi-order_id     = gs_ooh-order_id.
+      gs_ooi-erdat        = sy-datum.
+      gs_ooi-erzet        = sy-uzeit.
+      gs_ooi-ernam        = sy-uname.
+
+      PERFORM exec_bdc_header.
+
+      lv_hindex += 1.
+
+<font color ="#0000FF">*-- 정비 오더 아이템 생성</font>
+      DO lv_count TIMES.
+        CLEAR gv_index.
+        gv_index = sy-index.
+        CALL FUNCTION 'NUMBER_GET_NEXT'
+          EXPORTING
+            nr_range_nr = '01'
+            object      = 'ZC103PM02'
+          IMPORTING
+            number      = lv_as.
+
+        gs_ooi-operation_id   = |AS{ lv_as }|.
+        gs_ooi-skill_type     = gt_as[ gv_index ].
+
+        PERFORM exec_bdc_item.
+        lv_iindex += 1.
+      ENDDO.
+
+    ENDLOOP.
+
+    PERFORM get_data_0100.
+    PERFORM set_data_0100.
+    PERFORM refresh_table USING go_disp_sch_alv.
+    PERFORM set_chart_data.
+
+    MESSAGE s001 WITH |정비 오더 { lv_hindex }건, 작업 항목 { lv_iindex }건이 생성되었습니다. |.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form exec_bdc_header</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exec_bdc_header.
+
+<font color ="#0000FF">*-- Set BDC Data</font>
+  CLEAR : gt_bdcdata, gs_bdcdata.
+  PERFORM dynpro USING : 'X' 'SAPMZC103PM0002'              '0200'   ,
+                         ' ' 'BDC_OKCODE'                   '=SAVEH' ,
+                         ' ' 'GS_SAVE_OOH-ORDER_ID'         gs_ooh-order_id,
+                         ' ' 'GS_SAVE_OOH-AIRCRAFT_ID'      gs_ooh-aircraft_id,
+                         ' ' 'GS_SAVE_OOH-SCHEDULEID'       gs_ooh-scheduleid,
+                         ' ' 'GS_SAVE_OOH-MAINT_TYPE'       gs_ooh-maint_type,
+                         ' ' 'GS_SAVE_OOH-PLAN_DATE'        gs_ooh-plan_date,
+                         ' ' 'GS_SAVE_OOH-RELEASE_DATE'     gs_ooh-release_date,
+                         ' ' 'GS_SAVE_OOH-REMARKS'          gs_ooh-remarks,
+                         ' ' 'GS_SAVE_OOH-ERDAT'            gs_ooh-erdat,
+                         ' ' 'GS_SAVE_OOH-ERZET'            gs_ooh-erzet,
+                         ' ' 'GS_SAVE_OOH-ERNAM'            gs_ooh-ernam .
+
+<font color ="#0000FF">*-- Set BDC Optrion</font>
+  gs_params-dismode   = 'N'.
+  gs_params-updmode   = 'A'.
+  gs_params-nobiend   = space.
+  gs_params-racommit  = 'X'.
+
+<font color ="#0000FF">*-- Execute BDC by Call transaction</font>
+  CALL TRANSACTION 'ZC103PM0002200'
+                      USING gt_bdcdata
+                      OPTIONS FROM gs_params
+                      MESSAGES INTO gt_msg.
+
+<font color ="#0000FF">*-- 성공 여부 판별</font>
+  CLEAR gs_msg.
+  gs_msg = VALUE #( gt_msg[ KEY key msgid = 'BC402_C62'
+                                    msgnr = '015' ] OPTIONAL ).
+  IF sy-subrc EQ 0.
+
+    CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+      EXPORTING
+        msgid               = gs_msg-msgid
+        msgnr               = gs_msg-msgnr
+        msgv1               = gs_msg-msgv1
+        msgv2               = gs_msg-msgv2
+        msgv3               = gs_msg-msgv3
+        msgv4               = gs_msg-msgv4
+      IMPORTING
+        message_text_output = gv_msg.
+
+    MESSAGE s000 WITH gv_msg.
+
+  ELSE.
+
+    gs_msg = VALUE #( gt_msg[ lines( gt_msg ) ] OPTIONAL ).
+
+    CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+      EXPORTING
+        msgid               = gs_msg-msgid
+        msgnr               = gs_msg-msgnr
+        msgv1               = gs_msg-msgv1
+        msgv2               = gs_msg-msgv2
+        msgv3               = gs_msg-msgv3
+        msgv4               = gs_msg-msgv4
+      IMPORTING
+        message_text_output = gv_msg.
+
+    MESSAGE s000 WITH gv_msg DISPLAY LIKE 'E'.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form exec_bdc_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exec_bdc_item.
+
+  DATA : lv_dur(10).
+
+  lv_dur = gs_ooi-duration.
+  CONDENSE lv_dur NO-GAPS.
+
+<font color ="#0000FF">*-- Set BDC Data</font>
+  CLEAR : gt_bdcdata, gs_bdcdata.
+  PERFORM dynpro USING : 'X' 'SAPMZC103PM0002'              '0300'   ,
+                         ' ' 'BDC_OKCODE'                   '=SAVEI' ,
+                         ' ' 'GS_SAVE_OOI-ORDER_ID'       gs_ooi-order_id,
+                         ' ' 'GS_SAVE_OOI-OPERATION_ID'   gs_ooi-operation_id,
+                         ' ' 'GS_SAVE_OOI-DESCRIPTION'    gs_ooi-description,
+                         ' ' 'GS_SAVE_OOI-DURATION'       lv_dur,
+                         ' ' 'GS_SAVE_OOI-SKILL_TYPE'     gs_ooi-skill_type,
+                         ' ' 'GS_SAVE_OOI-REMARKS '       gs_ooi-remarks,
+                         ' ' 'GS_SAVE_OOI-ERDAT'          gs_ooi-erdat,
+                         ' ' 'GS_SAVE_OOI-ERZET'          gs_ooi-erzet,
+                         ' ' 'GS_SAVE_OOI-ERNAM'          gs_ooi-ernam.
+
+<font color ="#0000FF">*-- Set BDC Optrion</font>
+  gs_params-dismode   = 'N'.
+  gs_params-updmode   = 'A'.
+  gs_params-nobiend   = space.
+  gs_params-racommit  = 'X'.
+
+<font color ="#0000FF">*-- Execute BDC by Call transaction</font>
+  CALL TRANSACTION 'ZC103PM0002300'
+                      USING gt_bdcdata
+                      OPTIONS FROM gs_params
+                      MESSAGES INTO gt_msg.
+
+<font color ="#0000FF">*-- 성공 여부 판별</font>
+  CLEAR gs_msg.
+  gs_msg = VALUE #( gt_msg[ KEY key msgid = 'BC402_C62'
+                                    msgnr = '015' ] OPTIONAL ).
+  IF sy-subrc EQ 0.
+
+    CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+      EXPORTING
+        msgid               = gs_msg-msgid
+        msgnr               = gs_msg-msgnr
+        msgv1               = gs_msg-msgv1
+        msgv2               = gs_msg-msgv2
+        msgv3               = gs_msg-msgv3
+        msgv4               = gs_msg-msgv4
+      IMPORTING
+        message_text_output = gv_msg.
+
+    MESSAGE s000 WITH gv_msg.
+
+  ELSE.
+
+    gs_msg = VALUE #( gt_msg[ lines( gt_msg ) ] OPTIONAL ).
+
+    CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+      EXPORTING
+        msgid               = gs_msg-msgid
+        msgnr               = gs_msg-msgnr
+        msgv1               = gs_msg-msgv1
+        msgv2               = gs_msg-msgv2
+        msgv3               = gs_msg-msgv3
+        msgv4               = gs_msg-msgv4
+      IMPORTING
+        message_text_output = gv_msg.
+
+    MESSAGE s000 WITH gv_msg DISPLAY LIKE 'E'.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form dynpro</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; PV_DYNPRO</font>
+<font color ="#0000FF">*&      --&gt; PV_FNAME</font>
+<font color ="#0000FF">*&      --&gt; PV_FVAL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM dynpro  USING    pv_dynpro
+                      pv_fname
+                      pv_fval.
+
+  CLEAR: gs_bdcdata.
+  CASE pv_dynpro.
+    WHEN 'X'.
+      gs_bdcdata-dynbegin = pv_dynpro.        " BDC Dynpro Start
+      gs_bdcdata-program  = pv_fname.         " BDC Program Name
+      gs_bdcdata-dynpro   = pv_fval.          " BDC Dynpro Number
+    WHEN OTHERS.
+      gs_bdcdata-fnam     = pv_fname.         " BDC field name
+      gs_bdcdata-fval     = pv_fval.          " BDC field value
+  ENDCASE.
+
+  APPEND gs_bdcdata TO gt_bdcdata.
+  CLEAR gs_bdcdata.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form get_data_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_data_0100 .
+
+  gt_as = VALUE #(
+                    ( skill_type = '기체' )
+                    ( skill_type = '항공전자' )
+                    ( skill_type = '엔진' )
+                    ( skill_type = '구조물' )
+                    ( skill_type = '내부장비' )
+                 ).
+
+<font color ="#0000FF">*-- Get Base Schedule Data</font>
+  gv_today = sy-datum.
+
+  CALL FUNCTION 'RP_CALC_DATE_IN_INTERVAL'
+    EXPORTING
+      date      = gv_today
+      days      = 0
+      months    = 1
+      years     = 0
+    IMPORTING
+      calc_date = gv_next_month.
+
+  CLEAR gt_sch.
+
+  zclc103pm_amdp01=&gt;get_schedule(
+    EXPORTING
+      iv_departdate = gv_today
+      iv_arrivedate = gv_next_month
+    IMPORTING
+      et_result     = DATA(lt_sch)
+  ).
+  gt_sch = CORRESPONDING #( lt_sch ).
+
+  SORT gt_sch BY scheduleid.
+
+<font color ="#0000FF">*-- Get Order Data</font>
+  SELECT
+    FROM zc103pmt0004
+    FIELDS order_id, aircraft_id, scheduleid, maint_type,
+           plan_date, release_date, close_date, remarks
+    INTO CORRESPONDING FIELDS OF TABLE @gt_order.
+
+<font color ="#0000FF">*-- Get Domain Value</font>
+  SELECT
+    FROM dd07v
+    FIELDS domvalue_l, ddtext
+    WHERE domname = 'ZC103D_FI_LAND'
+    INTO CORRESPONDING FIELDS OF TABLE @gt_dd07v.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_0100 .
+
+<font color ="#0000FF">*-- 버튼 속성 정의</font>
+  gv_make_status   = 'H'.
+  gv_green_status  = 'E'.
+  gv_yellow_status = 'E'.
+
+<font color ="#0000FF">*-- 변수 초기화</font>
+  CLEAR : gt_disp_sch, gv_int,
+          gv_rp01, gv_gp01, gv_yp01,
+          gv_rp02, gv_gp02, gv_yp02,
+          gv_rp03, gv_gp03, gv_yp03,
+          gv_rp04, gv_gp04, gv_yp04,
+          gv_rp05, gv_gp05, gv_yp05,
+          gv_rp06, gv_gp06, gv_yp06.
+
+<font color ="#0000FF">*-- 변수 선언</font>
+  DATA : lv_data LIKE gs_order,
+         lv_name TYPE string.
+
+<font color ="#0000FF">*-- 조회용 데이터 세팅</font>
+  LOOP AT gt_sch ASSIGNING FIELD-SYMBOL(&lt;fs&gt;).
+
+    CLEAR : gs_disp_sch, lv_data, gs_cell_tab, lv_name.
+
+<font color ="#0000FF">*-- 텍스트 데이터 삽입</font>
+    gs_disp_sch = VALUE #(
+                            scheduleid  = &lt;fs&gt;-scheduleid
+                            flightid    = &lt;fs&gt;-flightid
+                            countryfrom = gt_dd07v[ KEY key domvalue_l = &lt;fs&gt;-countryfrom ]-ddtext
+                            countryto   = gt_dd07v[ KEY key domvalue_l = &lt;fs&gt;-countryto ]-ddtext
+                            departdate  = &lt;fs&gt;-departdate
+                            departtime  = &lt;fs&gt;-departtime
+                            arrivedate  = &lt;fs&gt;-arrivedate
+                            arrivetime  = &lt;fs&gt;-arrivetime
+                            flighttime  = &lt;fs&gt;-flighttime
+                            erdat       = &lt;fs&gt;-erdat
+                            erzet       = &lt;fs&gt;-erzet
+                            ernam       = &lt;fs&gt;-ernam
+                            aedat       = &lt;fs&gt;-aedat
+                            aezet       = &lt;fs&gt;-aezet
+                            aenam       = &lt;fs&gt;-aenam
+                         ).
+
+<font color ="#0000FF">*-- 정비 오더 유무 확인</font>
+    lv_data = VALUE #( gt_order[ KEY schkey scheduleid = &lt;fs&gt;-scheduleid ] OPTIONAL ).
+
+<font color ="#0000FF">*-- 정비 오더 생성이 가능한 경우( 도착 도시가 '00'일 경우 )</font>
+    IF &lt;fs&gt;-countryto EQ '00'.
+
+<font color ="#0000FF">*-- 정비 오더가 이미 생성된 경우</font>
+      IF lv_data IS NOT INITIAL.
+
+        gs_disp_sch-status = icon_led_green.
+        gs_disp_sch-order  = icon_display_text.
+        gs_cell_tab = VALUE lvc_s_styl( fieldname = 'ORDER'
+                                        style     = cl_gui_alv_grid=&gt;mc_style_button ).
+
+        lv_name = |gv_g{ &lt;fs&gt;-flightid }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+        &lt;fs_name&gt; += 1.
+
+        INSERT gs_cell_tab INTO TABLE gs_disp_sch-celltab.
+
+<font color ="#0000FF">*-- 정비 오더가 생성되지 않은 경우</font>
+      ELSE.
+
+        gs_disp_sch-status = icon_led_yellow.
+
+        lv_name = |gv_y{ &lt;fs&gt;-flightid }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+        &lt;fs_name&gt; += 1.
+
+      ENDIF.
+
+<font color ="#0000FF">*-- 정비 오더 생성이 불가능할 경우( 도착 도시가 '00'이 아닌 경우 )</font>
+    ELSE.
+
+      lv_name = |gv_r{ &lt;fs&gt;-flightid }|.
+      ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+      &lt;fs_name&gt; += 1.
+
+    ENDIF.
+
+<font color ="#0000FF">*-- 가공된 데이터를 조회용 테이블에 삽입</font>
+    gt_disp_sch = VALUE #( BASE gt_disp_sch ( gs_disp_sch ) ).
+    UNASSIGN &lt;fs_name&gt;.
+
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_green</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_green.
+
+<font color ="#0000FF">*-- Set Display Data</font>
+  LOOP AT gt_disp_sch ASSIGNING FIELD-SYMBOL(&lt;fs&gt;) WHERE status NE icon_led_green.
+
+
+    CLEAR gv_tabix.
+    gv_tabix = sy-tabix.
+
+    DELETE gt_disp_sch INDEX gv_tabix.
+
+  ENDLOOP.
+
+  gv_make_status = 'H'.
+  gv_green_status = 'H'.
+  gv_yellow_status = 'H'.
+
+  PERFORM refresh_table USING go_disp_sch_alv.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_yellow</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_yellow.
+
+<font color ="#0000FF">*-- Set Display Data</font>
+  LOOP AT gt_disp_sch ASSIGNING FIELD-SYMBOL(&lt;fs&gt;) WHERE status NE icon_led_yellow.
+
+
+    CLEAR gv_tabix.
+    gv_tabix = sy-tabix.
+
+    DELETE gt_disp_sch INDEX gv_tabix.
+
+  ENDLOOP.
+
+  gv_make_status = 'H'.
+  gv_green_status = 'H'.
+  gv_yellow_status = 'H'.
+
+  PERFORM refresh_table USING go_disp_sch_alv.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_clic</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_click USING pa_id.
+  gv_make_status = 'E'.
+  CLEAR : gt_disp_sch, gv_int, gt_time, gv_id, gv_num,
+          gv_rp01, gv_gp01, gv_yp01,
+          gv_rp02, gv_gp02, gv_yp02,
+          gv_rp03, gv_gp03, gv_yp03,
+          gv_rp04, gv_gp04, gv_yp04,
+          gv_rp05, gv_gp05, gv_yp05,
+          gv_rp06, gv_gp06, gv_yp06.
+
+  gv_id = pa_id.
+
+  DATA : lv_data LIKE gs_order,
+         lv_name TYPE string.
+
+<font color ="#0000FF">*-- Set Display Data</font>
+  LOOP AT gt_sch ASSIGNING FIELD-SYMBOL(&lt;fs&gt;) WHERE flightid = pa_id.
+
+    CLEAR : gs_disp_sch, lv_data, gs_cell_tab, lv_name, gs_time.
+    gs_time-scheduleid = &lt;fs&gt;-scheduleid.
+    gv_int += &lt;fs&gt;-flighttime.
+    gs_time-flighttime = gv_int.
+    gs_time-departdate = &lt;fs&gt;-departdate.
+<font color ="#0000FF">*-- Insert Domain Value</font>
+    gs_disp_sch = VALUE #(
+                            scheduleid  =   &lt;fs&gt;-scheduleid
+                            flightid    =   &lt;fs&gt;-flightid
+                            countryfrom =   gt_dd07v[ KEY key domvalue_l = &lt;fs&gt;-countryfrom ]-ddtext
+                            countryto   =   gt_dd07v[ KEY key domvalue_l = &lt;fs&gt;-countryto ]-ddtext
+                            departdate  =   &lt;fs&gt;-departdate
+                            departtime  =   &lt;fs&gt;-departtime
+                            arrivedate  =   &lt;fs&gt;-arrivedate
+                            arrivetime  =   &lt;fs&gt;-arrivetime
+                            flighttime  =   &lt;fs&gt;-flighttime
+                            erdat       =   &lt;fs&gt;-erdat
+                            erzet       =   &lt;fs&gt;-erzet
+                            ernam       =   &lt;fs&gt;-ernam
+                            aedat       =   &lt;fs&gt;-aedat
+                            aezet       =   &lt;fs&gt;-aezet
+                            aenam       =   &lt;fs&gt;-aenam
+                         ).
+
+    lv_data = VALUE #( gt_order[ KEY schkey scheduleid = &lt;fs&gt;-scheduleid ] OPTIONAL ).
+
+    IF &lt;fs&gt;-countryto EQ '00'.
+      IF lv_data IS NOT INITIAL.
+        gs_disp_sch-status = icon_led_green.
+        gs_disp_sch-order  = icon_display_text.
+        gs_cell_tab = VALUE lvc_s_styl( fieldname = 'ORDER'
+                                   style = cl_gui_alv_grid=&gt;mc_style_button ).
+
+        lv_name = |gv_g{ &lt;fs&gt;-flightid }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+        &lt;fs_name&gt; += 1.
+
+        INSERT gs_cell_tab INTO TABLE gs_disp_sch-celltab.
+
+<font color ="#0000FF">*-- Time Check</font>
+        IF gs_check-fh_since_last_d + gs_time-flighttime &gt; 2400.
+
+          gs_check-fh_since_last_d = 0.
+
+        ENDIF.
+
+        IF gs_check-fh_since_last_c + gs_time-flighttime &gt; 6000.
+
+          gs_check-fh_since_last_c = 0.
+
+        ENDIF.
+
+        IF gs_check-fh_since_last_a + gs_time-flighttime &gt; 600.
+
+          gs_check-fh_since_last_a = 0.
+
+        ENDIF.
+
+      ELSE.
+
+        gs_disp_sch-status = icon_led_yellow.
+        gv_num += 1.
+        lv_name = |gv_y{ &lt;fs&gt;-flightid }|.
+        ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+        &lt;fs_name&gt; += 1.
+        APPEND gs_time TO gt_time.
+
+      ENDIF.
+    ELSE.
+
+      lv_name = |gv_r{ &lt;fs&gt;-flightid }|.
+      ASSIGN (lv_name) TO &lt;fs_name&gt;.
+
+      &lt;fs_name&gt; += 1.
+
+    ENDIF.
+
+    gt_disp_sch = VALUE #( BASE gt_disp_sch ( gs_disp_sch ) ).
+    UNASSIGN &lt;fs_name&gt;.
+
+  ENDLOOP.
+  IF gv_num IS INITIAL.
+    gv_make_status = 'H'.
+  ELSE.
+    gv_make_status = 'E'.
+  ENDIF.
+  gv_green_status = 'E'.
+  gv_yellow_status = 'E'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form exclude_toolbar</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exclude_toolbar .
+
+  DATA : ls_ui_functions TYPE ui_func.
+
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_undo.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_copy.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_copy_row.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_cut.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_delete_row.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_insert_row.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_append_row.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_paste.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_loc_paste_new_row.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_refresh.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_auf.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_average.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_print.
+  APPEND ls_ui_functions TO gt_ui_functions.
+  ls_ui_functions = cl_gui_alv_grid=&gt;mc_fc_graph.
+  APPEND ls_ui_functions TO gt_ui_functions.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_field_catalog_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_field_catalog_0100 .
+
+<font color ="#0000FF">*-- Setting Field catalog To Display Data</font>
+  gt_disp_sch_fcat = VALUE #(
+                              ( coltext = '상태'           col_pos = 1  fieldname = 'STATUS' just = 'C' )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 2  fieldname = 'SCHEDULEID' key = abap_true just = 'C' )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 3  fieldname = 'FLIGHTID' just = 'C'    )
+                              ( coltext = '출발도시'       col_pos = 4  fieldname = 'COUNTRYFROM' emphasize = 'X' )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 5  fieldname = 'DEPARTDATE'  just = 'C' )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 6  fieldname = 'DEPARTTIME' just = 'C'  )
+                              ( coltext = '도착도시'       col_pos = 7  fieldname = 'COUNTRYTO'   emphasize = 'X' )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 8  fieldname = 'ARRIVEDATE' just = 'C'  )
+                              ( ref_table = 'ZC103SDT0008' col_pos = 9  fieldname = 'ARRIVETIME' just = 'C'  )
+                              ( coltext = '비행시간'       col_pos = 10 fieldname = 'FLIGHTTIME' do_sum = abap_true )
+                              ( coltext = '주문오더'       col_pos = 11 fieldname = 'ORDER' just = 'C' )
+                           ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout_0100 .
+
+<font color ="#0000FF">*-- Set layout</font>
+  gs_disp_sch_layout  = VALUE #( zebra = abap_true
+                                 cwidth_opt = 'A'
+                                 sel_mode = 'D'
+                                 stylefname = 'CELLTAB'
+                                 totals_bef = abap_true
+                               ).
+
+<font color ="#0000FF">*-- Set Variant</font>
+  gs_variant = VALUE #( report = sy-repid ).
+
+<font color ="#0000FF">*-- Set sort</font>
+  gt_disp_sch_sort = VALUE #(
+                              ( fieldname = 'FLIGHTID'   up = abap_true spos = '1' subtot = abap_true )
+                              ( fieldname = 'SCHEDULEID' up = abap_true spos = '2' )
+                            ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_object_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_object_0100 .
+
+<font color ="#0000FF">*-- Top Of Page</font>
+  CREATE OBJECT go_top_container
+    EXPORTING
+      repid     = sy-cprog
+      dynnr     = sy-dynnr
+      side      = go_top_container-&gt;dock_at_top
+      extension = 80.
+
+<font color ="#0000FF">*-- Base Con</font>
+  CREATE OBJECT go_0100_con
+    EXPORTING
+      side      = go_0100_con-&gt;dock_at_left
+      extension = 5000.
+
+  _split_create go_0100_spt go_0100_con 1 3.
+
+<font color ="#0000FF">*-- Create SCH ALV(Left)</font>
+  _split_get go_0100_spt 1 2 go_disp_sch_con.
+  _obj go_disp_sch_alv go_disp_sch_con.
+
+<font color ="#0000FF">*-- Create List Tree(Right)</font>
+  DATA: l_header_text TYPE treev_hhdr,
+        l_list_text   TYPE treev_lhdr.
+
+  l_header_text-heading = 'Object Name'.
+  l_header_text-width = 40.
+  l_list_text-heading = 'Description'.
+
+  _split_get go_0100_spt 1 1 go_list_con.
+  CREATE OBJECT go_list_tree
+    EXPORTING
+      parent              = go_list_con
+      node_selection_mode = cl_gui_list_tree=&gt;node_sel_mode_single
+      item_selection      = 'X'
+      hierarchy_header    = l_header_text
+      list_header         = l_list_text
+      with_headers        = 'X'.
+
+<font color ="#0000FF">*-- Set Width</font>
+  go_0100_spt-&gt;set_column_width(
+    EXPORTING
+      id                = 2
+      width             = 50
+  ).
+  go_0100_spt-&gt;set_column_width(
+    EXPORTING
+      id                = 3
+      width             = 33
+  ).
+
+<font color ="#0000FF">*-- Create TOP-Document</font>
+  CREATE OBJECT go_dyndoc_id
+    EXPORTING
+      style = 'ALV_GRID'.
+
+  PERFORM list_tree_event.
+
+<font color ="#0000FF">*- Create Chart</font>
+  _split_get go_0100_spt 1 3 go_chart_con.
+
+  CREATE OBJECT go_chart_eng
+    EXPORTING
+      parent = go_chart_con.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_chart</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_chart .
+
+  PERFORM set_chart_data.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_chart_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_chart_data .
+
+  CLEAR : go_ixml,
+           go_ixml_sf,
+           go_ixml_docu,
+           go_ixml_ostream,
+           go_ixml_encoding,
+           go_chartdata,
+           go_categories,
+           go_category,
+           go_series,
+           go_point,
+           go_value.
+
+  CLEAR : gv_xstring.
+
+  go_ixml = cl_ixml=&gt;create(  ).
+  go_ixml_sf = go_ixml-&gt;create_stream_factory( ).
+
+  go_ixml_docu = go_ixml-&gt;create_document( ).
+
+  go_ixml_encoding = go_ixml-&gt;create_encoding(
+                       byte_order    = if_ixml_encoding=&gt;co_little_endian
+                       character_set = 'utf-8' ).
+
+  go_ixml_docu-&gt;set_encoding( encoding = go_ixml_encoding ).
+
+<font color ="#0000FF">*-- Now build a DOM, representing an XML document with chart data</font>
+  go_chartdata = go_ixml_docu-&gt;create_simple_element(
+                                        name   = 'ChartData'
+                                        parent = go_ixml_docu ).
+
+<font color ="#0000FF">*-- Categories (parent)</font>
+  go_categories = go_ixml_docu-&gt;create_simple_element(
+                                        name   = 'Categories'
+                                        parent = go_chartdata ).
+
+  PERFORM set_category_value.
+  PERFORM set_chart_value.
+
+  go_chart_eng-&gt;set_data( xdata = gv_xstring ).
+  go_chart_eng-&gt;render( ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_category_value</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_category_value .
+
+  DATA : lv_value TYPE string.
+
+<font color ="#0000FF">*-- Categories (children)</font>
+  go_category = go_ixml_docu-&gt;create_simple_element(
+                                        name   = 'Category'
+                                        parent = go_categories ).
+  go_category-&gt;if_ixml_node~set_value( '정비 오더 생성 완료' ).
+
+
+  go_category = go_ixml_docu-&gt;create_simple_element(
+                                      name   = 'Category'
+                                      parent = go_categories ).
+  go_category-&gt;if_ixml_node~set_value( '정비 오더 대상 노선' ).
+
+  go_category = go_ixml_docu-&gt;create_simple_element(
+                                      name   = 'Category'
+                                      parent = go_categories ).
+  go_category-&gt;if_ixml_node~set_value( '정비 오더 비대상 노선' ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_chart_value</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_chart_value .
+
+<font color ="#0000FF">*-- 변수 초기화 및 항공기 설정</font>
+  DATA : lv_value TYPE string,
+         lv_name  TYPE string.
+  gt_value = VALUE #( ( name = 'P01' )
+                      ( name = 'P02' )
+                      ( name = 'P03' )
+                      ( name = 'P04' )
+                      ( name = 'P05' )
+                      ( name = 'P06' ) ).
+
+  LOOP AT gt_value ASSIGNING FIELD-SYMBOL(&lt;fs&gt;).
+
+    CLEAR lv_name.
+
+<font color ="#0000FF">*-- Build series (we need only 1)</font>
+    lv_value = &lt;fs&gt;-name.
+    go_series = go_ixml_docu-&gt;create_simple_element(
+                                                      name = 'Series'
+                                                      parent = go_chartdata ).
+    go_series-&gt;set_attribute( name  = 'label'
+                              value = lv_value ). "'Series1' ).
+
+<font color ="#0000FF">*-- 정비 오더 생성된 스케줄</font>
+    lv_name = |gv_g{ &lt;fs&gt;-name }|.
+    ASSIGN (lv_name) TO &lt;fs_name&gt;.
+    lv_value = &lt;fs_name&gt;.
+    go_point = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Point'
+                                                    parent = go_series ).
+    go_point-&gt;set_attribute( name  = 'label'
+                             value = lv_value ).
+    go_value = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Value'
+                                                    parent = go_point ).
+    go_value-&gt;if_ixml_node~set_value( lv_value ).
+
+<font color ="#0000FF">*-- 정비 오더 생성 가능한 스케줄</font>
+    lv_name = |gv_y{ &lt;fs&gt;-name }|.
+    ASSIGN (lv_name) TO &lt;fs_name&gt;.
+    lv_value = &lt;fs_name&gt;.
+    go_point = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Point'
+                                                    parent = go_series ).
+    go_point-&gt;set_attribute( name  = 'label'
+                             value = lv_value ).
+    go_value = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Value'
+                                                    parent = go_point ).
+    go_value-&gt;if_ixml_node~set_value( lv_value ).
+
+<font color ="#0000FF">*-- 정비 오더가 생성 불가능한 스케줄</font>
+    lv_name = |gv_r{ &lt;fs&gt;-name }|.
+    ASSIGN (lv_name) TO &lt;fs_name&gt;.
+    lv_value = &lt;fs_name&gt;.
+    go_point = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Point'
+                                                    parent = go_series ).
+    go_point-&gt;set_attribute( name  = 'label'
+                             value = lv_value ).
+    go_value = go_ixml_docu-&gt;create_simple_element(
+                                                    name = 'Value'
+                                                    parent = go_point ).
+    go_value-&gt;if_ixml_node~set_value( lv_value ).
+    UNASSIGN &lt;fs_name&gt;.
+
+  ENDLOOP.
+
+<font color ="#0000FF">*-- create ostream (into string variable) and render document into stream</font>
+  go_ixml_ostream = go_ixml_sf-&gt;create_ostream_xstring( gv_xstring ).
+  go_ixml_docu-&gt;render( go_ixml_ostream ). "here f_xstring is filled
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_event_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_event_0100 .
+
+  SET HANDLER : lcl_event_handler=&gt;top_of_page               FOR go_disp_sch_alv,
+                lcl_event_handler=&gt;edit_toolbar              FOR go_disp_sch_alv,
+                lcl_event_handler=&gt;button_click              FOR go_disp_sch_alv,
+                lcl_event_handler=&gt;user_command              FOR go_disp_sch_alv,
+                lcl_event_handler=&gt;handle_expand_no_children FOR go_list_tree,
+                lcl_event_handler=&gt;handle_item_click         FOR go_list_tree,
+                lcl_event_handler=&gt;chart_click               FOR go_chart_eng.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_alv_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_alv_0100 .
+
+<font color ="#0000FF">*-- Set variant handle & Dispaly alv</font>
+  gs_variant-handle = 'SCHEDULE'.
+  gs_disp_sch_layout-grid_title = '항공기 스케줄'.
+  go_disp_sch_alv-&gt;set_table_for_first_display(
+    EXPORTING
+      is_variant                    = gs_variant
+      i_save                        = 'A'
+      i_default                     = 'X'
+      is_layout                     = gs_disp_sch_layout
+      it_toolbar_excluding          = gt_ui_functions
+    CHANGING
+      it_outtab                     = gt_disp_sch
+      it_fieldcatalog               = gt_disp_sch_fcat
+      it_sort                       = gt_disp_sch_sort
+  ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form register_event</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM register_event_0100 .
+
+  CALL METHOD go_dyndoc_id-&gt;initialize_document
+    EXPORTING
+      background_color = cl_dd_area=&gt;col_textarea.
+
+  CALL METHOD go_disp_sch_alv-&gt;list_processing_events
+    EXPORTING
+      i_event_name = 'TOP_OF_PAGE'
+      i_dyndoc_id  = go_dyndoc_id.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form event_top_of_page</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM event_top_of_page .
+
+  DATA : lr_dd_table TYPE REF TO cl_dd_table_element,
+         col_field   TYPE REF TO cl_dd_area,
+         col_value   TYPE REF TO cl_dd_area.
+
+  DATA : lv_text TYPE sdydo_text_element,
+         lv_icon TYPE icon-id.
+
+  CALL METHOD go_dyndoc_id-&gt;add_table
+    EXPORTING
+      no_of_columns = 2
+      border        = '0'
+    IMPORTING
+      table         = lr_dd_table.
+
+<font color ="#0000FF">*-- Set column</font>
+  CALL METHOD lr_dd_table-&gt;add_column
+    IMPORTING
+      column = col_field.
+
+  CALL METHOD lr_dd_table-&gt;add_column
+    IMPORTING
+      column = col_value.
+
+<font color ="#0000FF">*-- 기준 연도</font>
+  lv_text = gv_today(4) && '년'.
+  PERFORM add_row USING lr_dd_table col_field col_value '기준연도' lv_text.
+
+<font color ="#0000FF">*-- 기준 날짜</font>
+  lv_text = gv_today+4(2) && '월' && gv_today+6(2) && '일'.
+  PERFORM add_row USING lr_dd_table col_field col_value '기준날짜' lv_text.
+
+<font color ="#0000FF">*-- Description</font>
+  lv_text = |{ gv_today(4) }년 { gv_today+4(2) }월 { gv_today+6(2) }일 ~ { gv_next_month(4) }년 { gv_next_month+4(2) }월 { gv_next_month+6(2) }일|.
+  PERFORM add_row USING lr_dd_table col_field col_value '조회조건' lv_text.
+
+<font color ="#0000FF">*-- Icon</font>
+  lv_text = 'GREEN'.
+  PERFORM add_row USING lr_dd_table col_field col_value '정비 오더 생성 완료' lv_text.
+
+  lv_text = 'YELLOW'.
+  PERFORM add_row USING lr_dd_table col_field col_value '정비 오더 대상 노선' lv_text.
+
+  PERFORM add_row USING lr_dd_table col_field col_value '정비 오더 비대상 노선' ' '.
+
+  PERFORM set_top_of_page.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form add_row</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; LR_DD_TABLE</font>
+<font color ="#0000FF">*&      --&gt; COL_FIELD</font>
+<font color ="#0000FF">*&      --&gt; COL_VALUE</font>
+<font color ="#0000FF">*&      --&gt; P_</font>
+<font color ="#0000FF">*&      --&gt; LV_TEXT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM add_row  USING pr_dd_table  TYPE REF TO cl_dd_table_element
+                    pv_col_field TYPE REF TO cl_dd_area
+                    pv_col_value TYPE REF TO cl_dd_area
+                    pv_field
+                    pv_text.
+
+  DATA : lv_text TYPE sdydo_text_element,
+         lv_icon TYPE iconname.
+
+<font color ="#0000FF">*-- Field.</font>
+  lv_text = pv_field.
+
+  CALL METHOD pv_col_field-&gt;add_text
+    EXPORTING
+      text         = lv_text
+      sap_emphasis = cl_dd_document=&gt;strong
+      sap_color    = cl_dd_document=&gt;list_heading_inv.
+
+  CALL METHOD pv_col_field-&gt;add_gap
+    EXPORTING
+      width = 3.
+
+<font color ="#0000FF">*-- Value.</font>
+  CASE pv_text.
+    WHEN 'GREEN'.
+      CALL METHOD pv_col_value-&gt;add_icon
+        EXPORTING
+          sap_icon = 'ICON_LED_GREEN'.
+    WHEN 'RED'.
+      CALL METHOD pv_col_value-&gt;add_icon
+        EXPORTING
+          sap_icon = 'ICON_LED_RED'.
+    WHEN 'YELLOW'.
+      CALL METHOD pv_col_value-&gt;add_icon
+        EXPORTING
+          sap_icon = 'ICON_LED_YELLOW'.
+    WHEN OTHERS.
+      lv_text = pv_text.
+      CALL METHOD pv_col_value-&gt;add_text
+        EXPORTING
+          text         = lv_text
+          sap_emphasis = cl_dd_document=&gt;heading
+          sap_color    = cl_dd_document=&gt;list_negative_inv.
+  ENDCASE.
+
+  CALL METHOD pv_col_value-&gt;add_gap
+    EXPORTING
+      width = 3.
+
+  CALL METHOD pr_dd_table-&gt;new_row.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_top_of_page</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_top_of_page .
+
+<font color ="#0000FF">* Creating html control</font>
+  IF go_html_cntrl IS INITIAL.
+    CREATE OBJECT go_html_cntrl
+      EXPORTING
+        parent = go_top_container.
+  ENDIF.
+
+  CALL METHOD go_dyndoc_id-&gt;merge_document.
+  go_dyndoc_id-&gt;html_control = go_html_cntrl.
+
+<font color ="#0000FF">* Display document</font>
+  CALL METHOD go_dyndoc_id-&gt;display_document
+    EXPORTING
+      reuse_control      = 'X'
+      parent             = go_top_container
+    EXCEPTIONS
+      html_display_error = 1.
+
+  IF sy-subrc NE 0.
+    MESSAGE s001 WITH TEXT-e01 DISPLAY LIKE 'E'.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_list_tree_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_list_tree_0100 .
+
+  PERFORM build_node_and_item_table USING node_table item_table.
+
+  node_key_table = VALUE #(
+                            ( 'Root' )
+                            ( 'Child1' )
+                            ( 'Child2' )
+                          ).
+
+
+  CALL METHOD go_list_tree-&gt;add_nodes_and_items
+    EXPORTING
+      node_table                = node_table
+      item_table                = item_table
+      item_table_structure_name = 'MTREEITM'.
+
+  CALL METHOD go_list_tree-&gt;expand_root_nodes.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form build_node_and_item_table</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; NODE_TABLE</font>
+<font color ="#0000FF">*&      --&gt; ITEM_TABLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM build_node_and_item_table  USING     note_table TYPE treev_ntab
+                                          item_table LIKE item_table.
+
+  DATA : node TYPE treev_node, item TYPE mtreeitm.
+  node-node_key = 'Root'.
+  node-n_image = '@06@'.
+  node-exp_image = '@07@'.
+  node-isfolder = 'X'."folder.
+  node-expander = 'X'.
+  APPEND node TO node_table.
+
+  CLEAR item.
+  item-node_key = 'Root'.
+  item-item_name = '1'.
+  item-alignment = cl_gui_list_tree=&gt;align_auto.
+  item-text = '항공기 기종'.
+  APPEND item TO item_table.
+
+  CLEAR node.
+  node-node_key = 'Child1'.
+  node-relatkey = 'Root'.
+  node-n_image  = '@54@'.
+  node-exp_image = '@55@'.
+  node-isfolder = 'X'.
+  node-expander = 'X'.
+  APPEND node TO node_table.
+
+  CLEAR item.
+  item-node_key = 'Child1'.
+  item-item_name = '1'.
+  item-alignment = cl_gui_list_tree=&gt;align_auto.
+  item-text = 'A321XLR'.
+  APPEND item TO item_table.
+
+  CLEAR node.
+  node-node_key = 'Child2'.
+  node-relatkey = 'Root'.
+  node-n_image  = '@54@'.
+  node-exp_image = '@55@'.
+  node-isfolder = 'X'.
+  node-expander = 'X'.
+  APPEND node TO node_table.
+
+  CLEAR item.
+  item-node_key = 'Child2'.
+  item-item_name = '1'.
+  item-alignment = cl_gui_list_tree=&gt;align_auto.
+  item-text = 'B787-9'.
+  APPEND item TO item_table.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form list_tree_event</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM list_tree_event .
+
+  DATA : events TYPE cntl_simple_events.
+  DATA : event  TYPE cntl_simple_event.
+  event-eventid = cl_gui_list_tree=&gt;eventid_expand_no_children.
+  event-appl_event = 'X'.
+  APPEND event TO events.
+  event-eventid = cl_gui_list_tree=&gt;eventid_button_click.
+  event-appl_event = 'X'.
+  APPEND event TO events.
+  CALL METHOD go_list_tree-&gt;set_registered_events
+    EXPORTING
+      events = events.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form salv_display</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM salv_display USING pv_scheduleid TYPE  zc103e_sd_scheduleid.
+
+  DATA: lo_container TYPE REF TO cl_gui_dialogbox_container,
+        lo_columns   TYPE REF TO cl_salv_columns_table,
+        lo_column    TYPE REF TO cl_salv_column_table,
+        ls_color     TYPE lvc_s_colo.
+
+  CLEAR gt_disp_order.
+
+  LOOP AT gt_order ASSIGNING FIELD-SYMBOL(&lt;fs&gt;)
+    USING KEY schkey WHERE scheduleid = pv_scheduleid.
+    APPEND &lt;fs&gt; TO gt_disp_order.
+  ENDLOOP.
+
+  " 팝업 컨테이너 생성
+  CREATE OBJECT lo_container
+    EXPORTING
+      width   = 600
+      height  = 100
+      top     = 100
+      left    = 100
+      caption = '정비 오더'.
+
+  " 핸들러 연결 (X버튼 눌렀을 때 close 이벤트 처리)
+  SET HANDLER lcl_event_handler=&gt;on_close FOR lo_container.
+
+<font color ="#0000FF">* Simple ALV 출력</font>
+  TRY.
+      "리스트 생성
+      cl_salv_table=&gt;factory(
+  EXPORTING
+    r_container  = lo_container
+        IMPORTING
+          r_salv_table = DATA(lo_alv)
+        CHANGING
+          t_table      = gt_disp_order  ).
+
+<font color ="#0000FF">*      " 열 너비 자동 최적화</font>
+      lo_alv-&gt;get_columns( )-&gt;set_optimize( ).
+
+      lo_columns = lo_alv-&gt;get_columns( ).
+
+      TRY.
+          lo_column ?= lo_columns-&gt;get_column( 'ORDER_ID' ).
+        CATCH cx_salv_not_found INTO DATA(lx_salv_nf).
+          MESSAGE lx_salv_nf-&gt;get_text( ) TYPE 'E'.
+      ENDTRY.
+      ls_color-col = 1.
+      ls_color-int = 1.
+      lo_column-&gt;set_color( ls_color ).
+
+      lo_alv-&gt;display( ).
+
+    CATCH cx_salv_msg INTO DATA(lx_salv).
+      MESSAGE s000 WITH
+      | ❌ ALV 표시 실패:{ lx_salv-&gt;get_text( ) }| DISPLAY LIKE 'E'.
+  ENDTRY.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
